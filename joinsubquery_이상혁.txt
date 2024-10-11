@@ -1,0 +1,8 @@
+mysql> select e.ename, e.job, e.deptno, d.dname, d.loc from emp e inner join dept d on e.job = 'manager' and e.deptno = d.deptno;
++-------+---------+--------+------------+----------+
+| ename | job     | deptno | dname      | loc      |
++-------+---------+--------+------------+----------+
+| JONES | MANAGER |     20 | RESEARCH   | DALLAS   |
+| BLAKE | MANAGER |     30 | SALES      | CHICAGO  |
+| CLARK | MANAGER |     10 | ACCOUNTING | NEW YORK |
++-------+---------+--------+------------+----------+

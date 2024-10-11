@@ -1,0 +1,390 @@
+select * from emp ;
+
+-- 문제1] job으로 그룹화 sal필드 평균 
+select avg(sal) from emp ;
+select job "직업", avg(sal) "평균" from emp group by job;
+-- CLERK	1037.5
+-- SALESMAN	1400
+-- MANAGER	2758.3333333333335
+-- ANALYST	3000
+-- PRESIDENT	5000
+
+-- 문제2] job으로 그룹화 sal필드 평균 기본  SALESMAN아닌사람
+select job "직업", avg(sal) "평균" from emp 
+ where job != 'SALESMAN' group by job;
+
+-- CLERK	1037.5
+-- MANAGER	2758.3333333333335
+-- ANALYST	3000
+-- PRESIDENT	5000
+
+
+-- 문제3] job으로 그룹화 sal필드 평균 기본  SALESMAN아닌사람
+-- 			   평균금액 3자릿수, 정수표시  round(), format(숫자데이터, 자릿수)권장
+
+select job "직업", format(avg(sal),0) "평균" from emp 
+ where job != 'SALESMAN' group by job;
+
+select avg(sal) from emp ;
+-- 평균2073.214285714286 
+
+select job, sum(sal) from emp group by job  ;
+-- CLERK	4150
+-- SALESMAN	5600
+-- MANAGER	8275
+-- ANALYST	6000
+-- PRESIDENT	5000
+
+-- 문제4] job으로 그룹화 sal필드 평균 기본  SALESMAN아닌사람
+-- 			 평균금액 3자릿수, 정수표시  round(), format(숫자데이터, 자릿수)권장
+--       합계 5000이상인사람  (출력값은 평균인데... 조건값은 합계 )
+-- 문제4 확장   avg(sal)출력   조건having sum(sal)
+select job "직업", format(avg(sal),0) "평균" from emp 
+ where job != 'SALESMAN' group by job having sum(sal) > 5000; 
+--  MANAGER	2,758
+--  ANALYST	3,000
+ 
+--    avg(sal)출력   조건having avg(sal)
+select job "직업", format(avg(sal),0) "평균" from emp 
+ where job != 'SALESMAN' group by job having avg(sal) >= 3000 ;  
+--  CLERK	1,038      조건불만족
+-- MANAGER	2,758    조건불만족
+-- ANALYST	3,000    출력
+-- PRESIDENT	5,000  출력
+ 
+ 
+ 
+ select job "직업", format(sum(sal),0) "결과" from emp 
+ where job != 'SALESMAN' group by job; 
+-- CLERK	4,150
+-- MANAGER	8,275
+-- ANALYST	6,000
+-- PRESIDENT	5,000
+-- ----------------------------------------------------------------------- 
+-- -----------------------------------------------------------------------
+-- -----------------------------------------------------------------------
+ 
+select deptno, round(avg(sal)) "myavg" from emp group by deptno;
+select deptno, format(round(avg(sal)),0) "myavg" from emp group by deptno;
+
+select deptno, format(round(avg(sal)),0) "myavg" from emp 
+ group by deptno order by  myavg desc ;
+-- 10	2,917
+-- 20	2,175
+-- 30	1,567
+
+select deptno, format(round(avg(sal)),0) "myavg" from emp 
+ group by deptno order by  myavg desc  limit 1 ;
+
+select job, format(round(avg(sal)),0) "myavg" from emp 
+ group by job  limit 3 ;
+
+select job, format(round(avg(sal)),0) "myavg" from emp 
+ group by job   ;
+-- CLERK	1,038
+-- SALESMAN	1,400
+-- MANAGER	2,758
+-- ANALYST	3,000
+-- PRESIDENT	5,000
+ 
+ 
+select job, count(*) "인원수"  from emp  group by job   ;  -- 14명인원수 
+-- CLERK	4
+-- SALESMAN	4
+-- MANAGER	3
+-- ANALYST	2
+-- PRESIDENT	1
+ 
+ 
+select job,count(*) "인원수" from emp group by job having count(*) < 4 ; 
+
+select job,count(*) cnt from emp group by job having cnt < 4 ; 
+select job,count(*) cnt from emp group by job  ;  -- job별 그룹화
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+
+drop table dept ;
+
+CREATE TABLE DEPT(
+      DEPTNO INT(2),
+      DNAME VARCHAR(14),
+      LOC VARCHAR(13) ,
+      PRIMARY KEY(DEPTNO)
+);
+
+desc dept ;
+select * from  dept ;
+
+
+INSERT INTO DEPT VALUES (10, 'ACCOUNTING', 'NEW YORK');
+INSERT INTO DEPT VALUES (20, 'RESEARCH',   'DALLAS');
+INSERT INTO DEPT VALUES (30, 'SALES',      'CHICAGO');
+INSERT INTO DEPT VALUES (40, 'OPERATIONS', 'BOSTON');
+select * from  dept;
+commit ;
+
+
+drop table emp ;
+CREATE TABLE EMP (
+     EMPNO INT(4),
+     ENAME VARCHAR(10),
+     JOB VARCHAR(9),
+     MGR INT(4),
+     HIREDATE DATE,
+     SAL int(7),
+     COMM float(7),
+     DEPTNO INT(2), 
+     primary key(empno),
+     foreign key(deptno) references dept(deptno) on update cascade  on delete set null      
+);
+
+INSERT INTO EMP VALUES(7369, 'SMITH',  'CLERK',     7902, STR_TO_DATE('17-12-1980', '%d-%m-%Y'),  800, NULL, 20);
+INSERT INTO EMP VALUES(7499, 'ALLEN',  'SALESMAN',  7698, STR_TO_DATE('20-2-1981', '%d-%m-%Y'), 1600,  300, 30);
+INSERT INTO EMP VALUES(7521, 'WARD',   'SALESMAN',  7698, STR_TO_DATE('22-2-1981', '%d-%m-%Y'), 1250,  500, 30);
+INSERT INTO EMP VALUES(7566, 'JONES',  'MANAGER',   7839, STR_TO_DATE('2-4-1981', '%d-%m-%Y'),  2975, NULL, 20);
+INSERT INTO EMP VALUES(7654, 'MARTIN', 'SALESMAN',  7698, STR_TO_DATE('28-9-1981', '%d-%m-%Y'), 1250, 1400, 30);
+INSERT INTO EMP VALUES(9900, 'kimlee', 'SALESMAN',  7698, STR_TO_DATE('28-9-1981', '%d-%m-%Y'), 1250, 1400, 10);
+
+INSERT INTO EMP VALUES(7698, 'BLAKE',  'MANAGER',   7839, STR_TO_DATE('1-5-1981', '%d-%m-%Y'),  2850, NULL, 30);
+INSERT INTO EMP VALUES(7839, 'KING',   'PRESIDENT', NULL, STR_TO_DATE('17-11-1981', '%d-%m-%Y'), 5000, NULL, 10);
+INSERT INTO EMP VALUES(7902, 'FORD',   'ANALYST',   7566, STR_TO_DATE('3-12-1981', '%d-%m-%Y'),  3000, NULL, 20);
+
+commit ;
+select * from emp ;
+
+
+
+
+
+
+
+
+문제5] emp 테이블 ename 필드 , job필드 index 
+
+index는 자동으로 pk필드로 자동화 
+show databases ; 
+show tables ; 
+show index from test ; 
+show index from dept ;
+show index from emp ;
+
+select * from test ;
+show index from test ;
+
+create index idx_name on test(name);
+alter table test add index user_add_name(name);
+
+//mysql 제약조건 확인 
+desc information_schema.table_constraints ;
+select * from information_schema.table_constraints ;
+select * from information_schema.table_constraints where constraint_schema ;
+
+
+
+스키마 work_python 선택후 더블클릭 =use work_python
+ ㄴTables선택 -> create table...
+    create table game (
+      game_id  타입~~~ pk ,
+         game_name ~~~ 
+      game_wdate   
+   ) ;
+
+
+G  : generated column  (Name필드에 + '0920')
+  alter table modify column pos  generated always as(필드+ '0920') stored ;      
+
+AI : auto increment
+ZF : zero filled
+UN : unsigned Data type 
+B  : binary
+UQ : unique
+NN : Not null
+PK : primary key 
+
+
+
+
+drop table client ;
+create table client (
+   ct_no int(3) primary key,
+   ct_name varchar(10) ,
+   ct_grade varchar(2)
+);
+
+drop table corder;
+create table corder(
+  order_id  int(4) primary key,
+  order_date date,
+  ct_no int(3),
+  pt_id  varchar(16),
+  order_cnt int(2)
+);
+commit ;
+
+insert into client values( 1, 'kim', 'A');
+insert into client values( 2, 'lee', 'S');
+insert into client values( 3, 'goo', 'B');
+insert into client values( 4, 'park', 'C');
+insert into client values( 5, 'choi', 'B');
+insert into client values( 6, 'hong', 'S');
+insert into client values( 7, 'kang', 'A');
+select * from client;
+commit ;
+
+mysql> select * from client;
++-------+---------+----------+
+| ct_no | ct_name | ct_grade |
++-------+---------+----------+
+|     1 | kim     | A        |
+|     2 | lee     | S        |
+|     3 | goo     | B        |
+|     4 | park    | C        |
+|     5 | choi    | B        |
+|     6 | hong    | S        |
+|     7 | kang    | A        |
++-------+---------+----------+
+7 rows in set (0.00 sec)
+
+insert into corder values(9900, STR_TO_DATE('09-05-2021', '%d-%m-%Y'), 3, '엘쥐', 9);
+insert into corder values(9911, STR_TO_DATE('30-12-2022', '%d-%m-%Y'), 5, '구글', 7);
+insert into corder values(9922, STR_TO_DATE('23-06-2021', '%d-%m-%Y'), 3, '다음', 3);
+insert into corder values(9933, STR_TO_DATE('05-11-2022', '%d-%m-%Y'), 4, '마존', 8);
+insert into corder values(9944, STR_TO_DATE('17-02-2021', '%d-%m-%Y'), 4, '오클', 5);
+insert into corder values(9955, STR_TO_DATE('17-02-2021', '%d-%m-%Y'), 2, '삼선', 6);
+select * from corder;
+commit ;
+
+
+mysql> select * from client;
++-------+---------+----------+
+| ct_no | ct_name | ct_grade |
++-------+---------+----------+
+|     1 | kim     | A        |
+|     2 | lee     | S        |
+|     3 | goo     | B        |
+|     4 | park    | C        |
+|     5 | choi    | B        |
+|     6 | hong    | S        |
+|     7 | kang    | A        |
++-------+---------+----------+
+7 rows in set (0.00 sec)
+
+첫번째 fk설정 
+두번째 주문한사람정보  in( ), exists(), 조인
+  client(ct_no필드 pk) corder테이블(ct_no필드 3번째필드 연결)
+  corder테이블에서 주문한사람의 이름,등급 출력 
+
+mysql> select * from corder;
++----------+------------+-------+-------+-----------+
+| order_id | order_date | ct_no | pt_id | order_cnt |
++----------+------------+-------+-------+-----------+
+|     9900 | 2021-05-09 |     3 | 엘쥐  |         9 |
+|     9911 | 2022-12-30 |     5 | 구글  |         7 |
+|     9922 | 2021-06-23 |     3 | 다음  |         3 |
+|     9933 | 2022-11-05 |     4 | 마존  |         8 |
+|     9944 | 2021-02-17 |     4 | 오클  |         5 |
+|     9955 | 2021-02-17 |     2 | 삼선  |         6 |
++----------+------------+-------+-------+-----------+
+
+
+//조인으로 주문한 고객정보  in( ), exists(), 조인  2lee 3goo 4park 5choi
+ SELECT DISTINCT c.*  FROM client c inner join corder o  
+ on o.ct_no = c.ct_no  order by ct_no ;
+
+ select * from client c  
+  where   exists(select ct_no from corder o where o.ct_no=c.ct_no) 
+  order by c.ct_no ;
+
+ select * from client c  
+  where c.ct_no  in(select ct_no from corder o where o.ct_no=c.ct_no) 
+  order by c.ct_no ;
+
+//조인으로 주문안한 고객정보  1=kim  6=hong  7=kang 출력
+ select distinct c.* from client c  left outer JOIN  corder o
+ on o.ct_no = c.ct_no  where o.pt_id is null  order by ct_no ;
+ 3건출력
+
+ select distinct c.* from client c  right  outer JOIN  corder o
+ on o.ct_no = c.ct_no  where o.pt_id is null  order by ct_no ;
+ 문법에러는 아니고 데이터결과없음 
+
+
+
+
+
+
+//조인으로 주문안한 고객정보
+ select distinct c.* from client c  left outer JOIN  corder o
+ on o.ct_no = c.ct_no  where o.pt_id is null  order by ct_no ;
++-------+---------+----------+
+| ct_no | ct_name | ct_grade |
++-------+---------+----------+
+|     1 | kim     | A        |
+|     6 | hong    | S        |
+|     7 | kang    | A        |
++-------+---------+----------+
+3 rows in set (0.00 sec)
+
+
+mysql> select * from client;
++-------+---------+----------+
+| ct_no | ct_name | ct_grade |
++-------+---------+----------+
+|     1 | kim     | A        |
+|     2 | lee     | S        |
+|     3 | goo     | B        |
+|     4 | park    | C        |
+|     5 | choi    | B        |
+|     6 | hong    | S        |
+|     7 | kang    | A        |
++-------+---------+----------+
+7 rows in set (0.00 sec)
+
+
+mysql> select * from corder;
++----------+------------+-------+-------+-----------+
+| order_id | order_date | ct_no | pt_id | order_cnt |
++----------+------------+-------+-------+-----------+
+|     9900 | 2021-05-09 |     3 | 엘쥐  |         9 |
+|     9911 | 2022-12-30 |     5 | 구글  |         7 |
+|     9922 | 2021-06-23 |     3 | 다음  |         3 |
+|     9933 | 2022-11-05 |     4 | 마존  |         8 |
+|     9944 | 2021-02-17 |     4 | 오클  |         5 |
+|     9955 | 2021-02-17 |     2 | 삼선  |         6 |
++----------+------------+-------+-------+-----------+
+
+
+
+
+
+
+
+
+
+
+mysql> select  distinct deptno from  emp  ;
+mysql> select  distinct(deptno) from  emp ;
+
+
+//오라클 중복빼는 함수이면서 필드
+SQL> select distinct deptno from emp ;
+SQL> select distinct(deptno) from emp ;
+
+
+
+
+
+
+
+
+ naver 스키마schema에  client/corder
+ work_python 스키마schema  client/corder
+
+//참고사이트 
+https://www.mysqltutorial.org/getting-started-with-mysql/mysql-sample-database/
+
+
+
+
+
