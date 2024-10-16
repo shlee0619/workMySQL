@@ -1,0 +1,26 @@
+SQL> alter table mysj add total number(4);
+SQL> alter table mysj add avg number(5,2);
+SQL> update mysj set total = kor+eng+mat;
+SQL> update mysj set avg = round((total/3),2);
+       IDX NAME                   KOR   ENG   MAT      TOTAL        AVG
+---------- -------------------- ----- ----- ----- ---------- ----------
+         1 둘리                    90    80    96        266      88.67
+         2 희동                    10    30    20         60         20
+         3 또치                    75    40    65        180         60
+         4 도넛                    80    78    90        248      82.67
+         5 순신                   100    95   100        295      98.33
+
+SQL> select name, kor, eng, mat, total, avg,
+  2  case
+  3     when avg>= 70 then '축합격'
+  4     when avg<70 then '재시험'
+  5  end "결과"
+  6  from mysj order by avg desc;
+
+NAME                   KOR   ENG   MAT      TOTAL        AVG 결과
+-------------------- ----- ----- ----- ---------- ---------- ------------------
+순신                   100    95   100        295      98.33 축합격
+둘리                    90    80    96        266      88.67 축합격
+도넛                    80    78    90        248      82.67 축합격
+또치                    75    40    65        180         60 재시험
+희동                    10    30    20         60         20 재시험

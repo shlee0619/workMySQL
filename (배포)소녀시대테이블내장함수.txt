@@ -1,0 +1,560 @@
+★ SQL(Structured Query Language)
+1. 데이타 정의어(DDL : Data Definition Language)
+    : create, alter, drop, rename, truncate 
+2. 데이타 조작어(DML : Data Manipulation Language)
+    : insert, update, delete, select   
+3. 트랜잭션제어 TCL
+    : commit, rollback, savepoint
+4. 데이타 제어어(DCL : Data Control Language)
+    : grant, revoke
+
+
+★-------------------------------------------------------------------------------------------
+C:\Users\~~>  sqlplus   system/1234
+
+
+-- 테이블이름 확인 
+SQL> select tname from tab;
+SQL> select table_name  from user_tables ;
+
+-- 유저확인 account
+에러 SQL> select user_name from users ;
+정답 SQL> select username from dba_users ; 
+
+SQL> select file_name from dba_data_files;
+ FILE_NAME
+ --------------------------------------------------------------------------------
+ C:\ORACLEXE\APP\ORACLE\ORADATA\XE\USERS.DBF
+ C:\ORACLEXE\APP\ORACLE\ORADATA\XE\SYSAUX.DBF
+ C:\ORACLEXE\APP\ORACLE\ORADATA\XE\UNDOTBS1.DBF
+ C:\ORACLEXE\APP\ORACLE\ORADATA\XE\SYSTEM.DBF
+
+SQL> show parameter service_names;
+ NAME              TYPE     VALUE
+ --------------   -----     -----------------
+ service_names    string     XE
+
+
+SQL> show user ;
+SQL> clear screen ;
+SQL> select  2+3*7    결과    from dual;
+SQL> select  2+3*7    '결과'  from dual;   에러발생
+SQL> select  2+3*7    "결과"  from dual;   
+SQL> select  2+3*7 as "결과"  from dual;
+
+
+SQL> spool  C:\Mtest\test.sql
+
+
+- lower() : 소문자
+  SQL> select lower('BLUESKY') as red from dual;
+
+- upper() : 대문자
+  SQL> select upper('bluesky') as red from dual;
+
+- initcap() : 첫자만 대문자
+  SQL> select  initcap('bluesky') as a from dual;
+
+- concat() : 문자열 연결
+  SQL> select concat('green', 'color') from dual;
+
+- length(), 한글에적용 lengthb()*3byte : 
+SQL> select length('우리나라') , lengthb('우리나라') from dual;
+	length('우리나라')    lengthb('우리나라')
+	-------------------- ---------------------
+                   4                12
+
+
+select  concat('11', '22')  from dual ;
+select  concat('sky', 'blue')  from dual ;
+select  length('skyblue')  "byte" from dual ;
+select  lengthb('skyblue') "byte"  from dual ; 
+select  length('가나다')  "byte"  from dual ;  
+select  lengthb('가나다') "byte"  from dual ;  --한글 9byte취급
+select  lengthb('강낭당') "byte"  from dual ;  --한글 9byte취급
+
+//substr(),  instr() 문자열 함수  
+select substr('skyblue', 1,3 ) "결과"   from dual ; 
+select concat('sky', 'blue')   "결과"    from dual ;
+select instr('skyblue', 'sky' ) "결과"   from dual ; 
+select instr('skyktblue', 'kt' ) "결과"  from dual ; 
+
+select  lpad( 'skyblue', 12, '*')  from dual  ;
+select  rpad( 'skyblue', 12, '*')  from dual  ;
+  
+select  length('skyblue')  "길이" from dual ;
+select  length('가나다')   "길이"  from dual ; 
+
+//수학 abs(), floor(), trunc(), ceil(), round(), mod( ),
+select  abs(-789)  from dual ; 
+select  abs(-234)  "결과"  from dual ; 
+
+select  floor(12.3456)  from dual ; 
+select  floor(12.98745)  from dual ; 
+select  trunc(67.98745)  from dual ; 
+
+select  floor(12.98745 , 3)  from dual ; 
+select  trunc(67.98745 , 3)  from dual ; 
+select  round(67.98745 , 3)  from dual ; 
+select  round(67.34561, 3)  from dual ;  
+
+select  2+3*7 from  dual ;
+select  (2+3)*7 from  dual ;  -- 우선순위는 ( )괄호 
+select  19/3 from  dual ;     -- 몫
+select  floor(19/3) from  dual ;
+select  trunc(19/3) from  dual ;
+select  19/5 from  dual ;     -- 몫
+select  19%5 from  dual ;     -- 나머지 에러발생
+select  mod(19,5) "나머지"  from  dual ;  -- 나머지연산은 mod()
+
+
+// 오라클에서 변환함수는 to_함수명( )
+// to_char(), to_date(), to_number()  
+
+select sysdate  from  dual ;
+select sysdate, to_char(sysdate, 'yyyy-mm-dd') from  dual ;
+select  to_char(sysdate, 'yyyy-mm-dd HH:MM:SS') "날짜"  from dual ;
+
+select  to_date( '2024-09-02', 'yyyy-mm-dd' )   from dual ;
+select  concat('12000' , '987')   "결과"  from  dual ;  --  12000987출력
+
+에러 select  "12000" + "987"   "결과"  from  dual ; 
+
+ select  '12000' + '987'   "결과"  from  dual ;  -- 성공 원래는 문자로 출력되어야 함
+      결과
+    ----------
+     12987
+
+ select  to_number('12000') + to_number('987')  "결과"  from  dual ;
+       결과
+      ----------
+      12987
+
+select  to_char('78122345' , 'yyyy-mm-dd') "결과"  from dual ;
+
+SQL> select  to_char( 789123 , '$99,999,999.99') "결과"  from dual ;
+ 	결과
+ 	------------------------------
+   	 $789,123.00
+
+SQL> select  to_char( 789123 , 'L99,999,999.99') "결과"  from dual ;
+ 	결과
+ 	------------------------------------------------
+           ￦789,123.00
+
+SQL> select  to_char( 78049123 , 'L99,999,999.99') "결과"  from dual ;
+ 	결과
+ 	------------------------------------------------
+        ￦78,049,123.00
+
+
+- sysdate( ) 괄호하면 에러  : 날짜
+  SQL> select sysdate from dual;   --실습
+  SQL> select sysdate() from dual;   --에러
+
+  SQL> spool off ;
+★-------------------------------------------------------------------------------------------
+★-------------------------------------------------------------------------------------------
+
+참고 SQL>  edit C:\Mtest\sosi.sql  
+   clear screen  ;
+   drop table sosi  ;  
+   create table sosi (
+      code   number(4) primary key , 
+      name   varchar2(10) not null , 
+      title  varchar2(16) not null ,
+      birth  date  
+   );
+
+   desc sosi ;
+   commit ;
+
+insert into sosi values(2200,'kim','blue',sysdate);
+insert into sosi values(5500,'lee','five',sysdate);
+insert into sosi values(9900,'goo','gugu',sysdate);
+insert into sosi values(8800,'aaa','red',sysdate);
+insert into sosi values(7700,'xyz','test',sysdate);
+select * from sosi ;
+commit ;
+
+
+//테이블이름 확인 
+SQL> select tname from tab;
+SQL> select  table_name  from user_tables ;
+
+
+ number : 숫자형
+ int    : 정수형
+ char   : 문자형(고정형)
+ varchar/varchar2 : 문자형(가변형) - 4000byte까지
+ clob : 문자형(4000byte이상일때)    - 최대 4GB character Large Object
+ blob : binary로저장(그림, 음악등)  - 최대 4GB  binary  Large Object
+ date : 날짜형
+ timestamp : date형의 확장
+
+
+참고 SQL>  @ C:\Mtest\sosi.sql
+참고 SQL>  start  C:\Mtest\sosi.sql
+참고 SQL>  clear screen ;  
+  
+
+
+오라클에서 행번호   rownum 
+SQL> select  *  from sosi ; 
+SQL> select rownum, code, name, title  from sosi ; --에러
+SQL> select rownum, my.* from  sosi  my ;  -- sosi테이블 as 
+
+select * from sosi order by code ;
+select * from sosi  where code = 5500  order by code;
+select * from sosi  where code != 5500 order by code;
+select * from sosi  where code ^= 5500 order by code;
+select * from sosi  where code <> 5500 order by code;
+
+
+문제] 제목중에서 e포함    코드 7700  논리조건 or
+SQL> select * from sosi where title like '%e%' or code=7700 ;
+SQL> select * from sosi where title like '%e%' and code=7700 ;
+SQL> select * from sosi where name  like '%e%' or code=7700 ;
+SQL> select * from sosi where name like '%e%' and code=7700 ;
+
+
+문제]  코드 3300 ~ 7700포함 
+ select * from sosi where code in ( 3300, 7700 ) ;
+ select * from sosi where code >= 3300 and  code <= 7700 ;
+ select * from sosi where code between  3300  and  7700 ;
+
+ clear screen 
+ select * from sosi where code between 3300 and  7700 ;
+ select * from sosi where code between 7700 and  3300 ;
+  ㄴ결과 no rows selected
+
+select * from sosi order by code ; -- 조건없이 소트순서
+select * from sosi  where code = 5500  order by code;
+select * from sosi  where code != 5500 order by code;
+select * from sosi  where code ^= 5500 order by code;
+select * from sosi  where code <> 5500 order by code;
+
+
+실습1] 맨끝 sal필드 number(7,2) 추가  기본값 default 0
+     alter table sosi add(sal  number(7,2) default 596.34) ;
+     desc sosi ;
+     select * from  sosi  ;
+
+실습2] 맨끝 wdate필드 date 추가  기본값 default sysdate
+      alter table sosi add(wdate date default sysdate) ;
+    desc sosi ;
+    select * from  sosi  ;
+
+실습3] title필드 varchar2(8) 축소 
+   alter table sosi modify( title varchar2(8)) ;
+  desc sosi ;
+  select * from  sosi  ;
+
+실습4] name필드 nick필드변경
+   alter table sosi rename column name to nick ;
+  desc sosi ;
+  select * from  sosi  ;
+
+실습5] birth 필드 삭제 
+  alter table sosi drop column birth ;
+ desc sosi ;
+ select * from  sosi  ;
+
+실습6] grade 필드 꼭꼭꼭추가 
+  alter table sosi add(grade char(1) default 'F' ) ;
+  desc sosi ;
+  select * from  sosi  ;
+
+SQL> 조건을 주어서 sal필드값 변경
+SQL> select  trunc(avg(sal),2) from sosi;   --소숫점2자릿수
+SQL> select  round(avg(sal),2) from sosi;   --소숫점2자릿수
+SQL> select  floor(avg(sal)) from sosi;     --소숫점버리기
+
+SQL> select * from sosi where name like '%e%' ;
+SQL> select * from sosi where name like '_e%' ;
+SQL> select * from sosi where grade in( 'A', 'F') ;
+SQL> select * from sosi where grade='A' or grade='F' ;
+
+
+insert into sosi values(2278,'bc','card',34.69,sysdate,'A');
+insert into sosi values(2279,'lg','gram',90.26,sysdate,'C');
+insert into sosi values(3378,'tea','cake',12.76,sysdate,'D');
+insert into sosi values(5576,'my','you',54.96,sysdate,'B');
+
+
+  code 2200  급여 sal  120.65 수정 갱신
+  code 3300  급여 sal  96.12  수정 갱신
+  code 8800  급여 sal  45.72  수정 갱신
+  code 9900  급여 sal  39.61  수정 갱신
+update sosi set sal = 120.65 where code = 2200 ;
+update sosi set sal = 96.12 where code = 3300 ;
+update sosi set sal = 45.72 where code = 8800 ;
+update sosi set sal = 39.61 where code = 9900 ; 
+
+
+  code 3300  등급 grade 'A' 수정 갱신
+  code 5500  등급 grade 'B' 수정 갱신
+  code 7700  등급 grade 'C' 수정갱신
+update sosi set grade='A' where code = 3300 ;
+update sosi set grade='B' where code = 5500 ;
+update sosi set grade='C' where code = 7700 ;  
+
+
+SQL> select code, nick, grade ,
+     case 
+        when grade = 'A'  then  '최고'  
+        when grade = 'B'  then  '합격'
+        when grade = 'C'  then  '보통'
+        when grade = 'D'  then  '노력'
+        when grade = 'F'  then  '재수강'
+      end  "결과"  
+   from sosi order by grade;
+
+
+- decode() : case문과 같은 기능
+SQL> select code, nick, grade ,
+    decode(grade,'A', 10,'B', 5, 'C', 3,'D',2,0)  "점수"
+    from sosi  order by grade;
+
+SQL> spool off ;
+
+insert into sosi values(6629,'mc','coffee', 290.26,sysdate, 'C');
+insert into sosi values(6638,'star','milk', 412.75,sysdate, 'D');
+insert into sosi values(6646,'park','snow', 354.94,sysdate, 'B');
+insert into sosi values(7712,'aaa','bbb', 98.36,sysdate, 'A');
+insert into sosi values(8846,'two','one', 61.46,sysdate, 'B');
+select * from  sosi order by code ;
+commit ;
+
+-- 복사 sosi테이블 2건 생성
+  drop table  sosiCopy ;
+  create table  sosiCopy 
+   as
+  select * from sosi ;
+  
+  commit ;
+  desc  sosiCopy ;
+  select * from  sosiCopy ;
+
+
+
+//group by ~ having 조건  집계함수 sum(sal) 
+SQL> select grade , sum(sal) from  sosi  group by grade
+     having sum(sal)> 2000 order by grade ;
+
+SQL> select grade , to_char(sum(sal), 'L99,999') from sosi group by grade
+     having sum(sal)> 2000 order by grade ;
+
+SQL> select grade, avg(sal) from sosi group by grade ;
+SQL> select grade, avg(sal) from sosi group by grade order by grade;
+SQL> select grade, to_char(avg(sal), 'L99,999.99') from sosi group by grade ;
+
+SQL> select grade, avg(sal) from sosi group by grade having avg(sal)< 1000;
+
+SQL> select grade, avg(sal) avg from sosi group by grade
+     having avg(sal) < 1000    order by grade ;
+
+
+★---------------------------------------------------------------------------------------------
+★---------------------------------------------------------------------------------------------
+-- 트랜잭션 : 
+  rollback : 마지막  되돌리기
+  commit : 완전히 DB에 저장하기
+
+SQL> clear screen ;
+SQL> select sequence_name  from user_sequences; 
+SQL> drop sequence    guest_seq ;  --error
+SQL> create sequence  guest_seq ;  --시퀀스는 자동번호 1부터시작 1씩증가 
+
+INCREMENT BY : 시퀀스 실행 시 증가시킬 값
+START WITH : 시퀀스의 시작값이다. (MINVALUE과 같거나 커야 한다)
+MINVALUE : 시퀀스가 시작되는 최솟값이다.
+MAXVALUE : 시퀀스가 끝나는 최댓값이다.
+NOCYCLE | CYCLE : NOCYCLE (반복안함), CYCLE(시퀀스의 최댓값에 도달 시 최솟값 1부터 다시시작)
+NOCACHE | CACHE : NOCACHE(사용안함), CACHE(캐시를 사용하여 미리 값을 할당해 놓아서 속도가 빠르며, 동시 사용자가 많을 경우 유리)
+NOORDER | ORDER : NOORDER(사용안함), ORDER(요청 순서로 값을 생성하여 발생 순서를 보장하지만 조금의 시스템 부하가 있음)
+
+
+SQL> drop table guest ;
+SQL> create table  guest (
+        key number  primary key ,
+        name varchar2(10) not null  ,
+        pay number(3)  
+     ) ;
+SQL> commit ;
+
+SQL> insert into guest values(guest_seq.nextval, 'abc', 23);
+SQL> insert into guest values(guest_seq.nextval, 'xyz', 34);
+SQL>에러  insert into guest value(guest_seq.nextval, 'park',90);
+SQL> insert into guest values(guest_seq.nextval, 'blue',78);
+SQL> select * from guest;
+   	 KEY NAME              PAY
+	---------- ---------- ----------
+         1   abc                23
+         2   xyz                34
+         3   blue               78
+
+SQL> delete from guest  where name='xyz' ;
+SQL>에러  delete * from guest  where name='xyz' ;
+SQL> select * from guest;
+SQL> insert into  guest  values(guest _seq.nextval, 'oreo', 41) ;
+SQL> insert into  guest  values(guest_seq.nextval, 'kim', 32 );
+SQL> select * from guest ;  
+        KEY NAME              PAY
+	---------- ---------- ----------
+         1 abc                23
+         3 blue               78
+         4 oreo               41
+         5 kim                32 
+
+
+SQL> drop sequence  bbs_seq ;
+SQL> create sequence  bbs_seq ; --1부터시작 1씩증가 
+
+SQL> drop table bbs ;
+SQL> create table   bbs  (
+          key number  primary key ,
+          name varchar2(10) not null  ,
+          pay number(3)  
+       )  ;
+SQL> commit ;
+
+SQL>insert into  bbs  values(bbs_seq.nextval, 'abc', 23);
+SQL>insert into  bbs  values(bbs_seq.nextval, 'xyz', 34);
+SQL>insert into  bbs  values(bbs_seq.nextval, 'blue',78);
+SQL>insert into  bbs  values(bbs_seq.nextval, 'red',45);
+SQL>insert into  bbs  values(bbs_seq.nextval, 'orange',56);
+
+SQL> select * from  bbs ;
+
+SQL> delete from  bbs   where name='xyz' ;
+SQL> select * from  bbs ;
+SQL> insert  into   bbs  values( bbs_seq.nextval, 'oreo', 41) ;
+SQL> select * from  bbs  ;   
+SQL> commit ;
+
+
+SQL> select  * from tab ;
+SQL> drop  table temp ;
+
+SQL> create table  temp(
+    empid  number(4) ,
+    empname  varchar2(10),
+    sal  number(7,2),
+    comm  number(5,2),
+    constraint  temp_chk_sal  check(sal>comm)  
+);       --만약에  보너스가 더 크면 check제약  
+ 
+SQL>insert into temp values( 2234, 'aaa', 4500, 91) ;
+SQL>insert into temp values( 2237, 'bbb', 3100, 71) ;
+SQL>commit ;
+SQL>select  * from temp ;
+SQL>insert into temp values( 2239, 'ccc', 780, 9800) ; --제약조건에러
+SQL>insert into temp values( 3345, 'ddd', 4500, 91) ;
+SQL>insert into temp values( 2239, 'ccc', 3400, 7600) ; --제약조건에러
+
+
+★---------------------------------------------------------------------------------------------
+★---------------------------------------------------------------------------------------------
+drop table emp ;
+drop table dept ;
+drop table salgrade ;
+drop table bonus ;
+commit ;
+
+
+drop table dept;
+create table dept(
+  deptno number(3) primary key ,
+  dname varchar2(20)  not null ,
+  loc varchar2(20) not null 
+);
+commit ;
+
+drop table emp ;
+create table emp(
+   empno number(4) primary key ,
+   ename varchar2(10) not null,
+   job varchar2(20) not null,
+   mgr number(4) ,
+   hiredate date,
+   sal number not null ,
+   comm number(7,2) , 
+   deptno number(3) not null 
+);
+commit ;
+
+ INSERT INTO DEPT VALUES (10,'ACCOUNTING','NEW YORK');
+ INSERT INTO DEPT VALUES (20,'RESEARCH','DALLAS');
+ INSERT INTO DEPT VALUES (30,'SALES','CHICAGO');
+ INSERT INTO DEPT VALUES (40,'OPERATIONS','BOSTON');
+ select * from dept ;
+ commit ;
+
+ INSERT INTO EMP VALUES(7369,'SMITH','CLERK',7902, to_date('1980-12-17','yyyy-MM-dd') ,800,null,20);
+ INSERT INTO EMP VALUES(7499,'ALLEN','SALESMAN',7698, to_date('1981-02-20','yyyy-MM-dd'),1600,300,30);
+ INSERT INTO EMP VALUES(7521,'WARD','SALESMAN',7698, to_date('1981-02-22','yyyy-MM-dd'),1250,200,30);
+ INSERT INTO EMP VALUES(7566,'JONES','MANAGER',7839, to_date('1981-04-02','yyyy-MM-dd'),2975,30,20);
+ INSERT INTO EMP VALUES(7654,'MARTIN','SALESMAN',7698, to_date('1981-09-28','yyyy-MM-dd'),1250,300,30);
+
+ INSERT INTO EMP VALUES(7698,'BLAKE','MANAGER',7839, to_date('1981-04-01','yyyy-MM-dd'),2850,null,30);
+ INSERT INTO EMP VALUES(7782,'CLARK','MANAGER',7839, to_date('1981-06-01','yyyy-MM-dd'),2450,null,10);
+ INSERT INTO EMP VALUES(7788,'SCOTT','ANALYST',7566, to_date('1982-10-09','yyyy-MM-dd'),3000,null,20);
+ INSERT INTO EMP VALUES(7839,'KING','PRESIDENT',null, to_date('1981-11-17','yyyy-MM-dd'),5000,3500,10); 
+ INSERT INTO EMP VALUES(7844,'TURNER','SALESMAN',7698, to_date('1981-09-08','yyyy-MM-dd'),1500,0,30);
+
+ INSERT INTO EMP VALUES(7876,'ADAMS','CLERK',7788, to_date('1983-01-12','yyyy-MM-dd'),1100,null,20);
+ INSERT INTO EMP VALUES(7900,'JAMES','CLERK',7698, to_date('1981-10-03','yyyy-MM-dd') ,950,null,30);
+ INSERT INTO EMP VALUES(7902,'FORD','ANALYST',7566, to_date('1984-11-05','yyyy-MM-dd') ,3000,null,20);
+ INSERT INTO EMP VALUES(7934,'MILLER','CLERK',7782, to_date('1982-01-23','yyyy-MM-dd'),1300,null,10);
+ select * from emp ;
+ commit ;
+
+create table salgrade (
+    grade  number,
+    losal  number,
+    hisal  number
+ );
+
+ INSERT INTO SALGRADE VALUES (1,700,1200);
+ INSERT INTO SALGRADE VALUES (2,1201,1400);
+ INSERT INTO SALGRADE VALUES (3,1401,2000);
+ INSERT INTO SALGRADE VALUES (4,2001,3000);
+ INSERT INTO SALGRADE VALUES (5,3001,4000);
+ select * from salgrade ;
+ commit ;
+
+create table bonus
+  as 
+  select ename, job, sal, comm  from emp  ;
+  commit ;
+  
+
+ col ename for a10
+ col job for a12
+ col sal for  9999
+ col comm for  9999
+ set linesize 2300
+ set pagesize 2300
+ clear screen
+
+ select  empno, ename, mgr from  emp;
+ select rownum,  e.* from  emp  e;
+ commit ;
+★---------------------------------------------------------------------------------------------
+★---------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
